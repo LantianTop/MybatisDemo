@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Message">
+
+  <resultMap type="com.lantian.pojo.Message" id="MessageResult">
+    <!--前面对应数据库中表的字段，后面对应实体类的属性-->
+    <id column="ID" jdbcType="INTEGER" property="id"/>
+    <result column="COMMAND" jdbcType="VARCHAR" property="command"/>
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description"/>
+    <result column="CONTENT" jdbcType="VARCHAR" property="content"/>
+  </resultMap>
+  <!--parameterType里面只能传递一个变量-->
+   <!--
+
+   -->
+  <select id="queryMessageList" parameterType="com.lantian.pojo.Message" resultMap="MessageResult">
+    select ID,COMMAND,DESCRIPTION,CONTENT from  message where 1=1
+    <if  test="command!=null and !&quot;&quot;.equals(command.trim())">and COMMAND= #{command}</if>
+    <if  test="description!=null and !&quot;&quot;.equals(description.trim())">and DESCRIPTION like "%" #{description} "%"</if>
+  </select>
+
+  <delete id="deleteOne" parameterType="int">
+  delete  from message  where ID=#{_parameter}
+  </delete>
+  <delete id="deleteBatch" parameterType="java.util.List">
+    delete  from message where ID in (
+            <foreach collection="list" item="item" separator=",">
+            #{item}
+            </foreach>
+    )
+  </delete>
+  <insert id="insertMessage" parameterType="com.lantian.pojo.Message">
+    insert into message (COMMAND, DESCRIPTION, CONTENT) values (#{command},#{description},#{content});
+  </insert>
+</mapper>
